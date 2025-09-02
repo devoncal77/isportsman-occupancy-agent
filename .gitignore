@@ -1,0 +1,6 @@
+# Python
+__pycache__/
+*.pyc
+
+# Node/Playwright cache (just in case)
+playwright/.cache/
