@@ -1,0 +1,29 @@
+name: iSportsman Occupancy Logger
+
+on:
+  schedule:
+    # Runs at 12:00 and 16:00 America/New_York (which is 16:00 & 20:00 UTC)
+    - cron: "0 16,20 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: pip install -r requirements.txt
+
+      # Install browser for Playwright
+      - run: python -m playwright install --with-deps chromium
+
+      - name: Run scraper
+        env:
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+          GOOGLE_SA_JSON: ${{ secrets.GOOGLE_SA_JSON }}
+          SHEET_TAB_NAME: "OccupancyLog"
+        run: python scrape_isportsman.py
