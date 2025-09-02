@@ -2,9 +2,12 @@ name: iSportsman Occupancy Logger
 
 on:
   schedule:
-    # Runs at 12:00 and 16:00 America/New_York (which is 16:00 & 20:00 UTC)
+    # 12:00 and 16:00 America/New_York = 16:00 & 20:00 UTC
     - cron: "0 16,20 * * *"
   workflow_dispatch: {}
+
+permissions:
+  contents: write  # needed for gh-pages deployment
 
 jobs:
   run:
@@ -18,12 +21,25 @@ jobs:
 
       - run: pip install -r requirements.txt
 
-      # Install browser for Playwright
       - run: python -m playwright install --with-deps chromium
 
-      - name: Run scraper
+      - name: Scrape iSportsman -> Google Sheet
         env:
           SHEET_ID: ${{ secrets.SHEET_ID }}
           GOOGLE_SA_JSON: ${{ secrets.GOOGLE_SA_JSON }}
           SHEET_TAB_NAME: "OccupancyLog"
         run: python scrape_isportsman.py
+
+      - name: Build dashboard HTML
+        env:
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+          GOOGLE_SA_JSON: ${{ secrets.GOOGLE_SA_JSON }}
+          SHEET_TAB_NAME: "OccupancyLog"
+        run: python build_dashboard.py
+
+      - name: Publish to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          publish_branch: gh-pages
