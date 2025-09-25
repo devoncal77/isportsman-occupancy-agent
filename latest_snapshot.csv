@@ -1,66 +1,66 @@
-Timestamp_ET,Area,Occupancy,Status,Hour,Weekday
-2025-09-24 16:29:38,A1,,Open,16:29,Wed
-2025-09-24 16:29:38,A2,,Open,16:29,Wed
-2025-09-24 16:29:38,A3 Bow (No Crossbow),,Open,16:29,Wed
-2025-09-24 16:29:38,B,,Closed,16:29,Wed
-2025-09-24 16:29:38,Beaver Pond,,Open,16:29,Wed
-2025-09-24 16:29:38,Brooks Hollow,,Open,16:29,Wed
-2025-09-24 16:29:38,Buckner Bow (No Crossbow),,Open,16:29,Wed
-2025-09-24 16:29:38,Bull Pond,,Open,16:29,Wed
-2025-09-24 16:29:38,C,,Open,16:29,Wed
-2025-09-24 16:29:38,CS,,Closed,16:29,Wed
-2025-09-24 16:29:38,CS 2 Bow (No Crossbow),,Closed,16:29,Wed
-2025-09-24 16:29:38,Constitution Island,,Closed,16:29,Wed
-2025-09-24 16:29:38,Cragston Lakes,,Open,16:29,Wed
-2025-09-24 16:29:38,Cranberry Pond,,Closed,16:29,Wed
-2025-09-24 16:29:38,D1,,Open,16:29,Wed
-2025-09-24 16:29:38,D2,,Open,16:29,Wed
-2025-09-24 16:29:38,D3,,Open,16:29,Wed
-2025-09-24 16:29:38,E1,,Open,16:29,Wed
-2025-09-24 16:29:38,E2,,Closed,16:29,Wed
-2025-09-24 16:29:38,F,,Open,16:29,Wed
-2025-09-24 16:29:38,FA - Popolopen Brook - Downstream from Weyants Bridge,,Closed,16:29,Wed
-2025-09-24 16:29:38,FA - Popolopen Brook - Upstream from Weyants Bridge,,Open,16:29,Wed
-2025-09-24 16:29:38,Firewood Collection - Garrard Rd,,Open,16:29,Wed
-2025-09-24 16:29:38,G1,,Open,16:29,Wed
-2025-09-24 16:29:38,G2 Bow (No Crossbow),,Open,16:29,Wed
-2025-09-24 16:29:38,H,,Open,16:29,Wed
-2025-09-24 16:29:38,I,,Closed,16:29,Wed
-2025-09-24 16:29:38,J1 Bow (No Crossbow),,Open,16:29,Wed
-2025-09-24 16:29:38,J2 Bow (No Crossbow),,Open,16:29,Wed
-2025-09-24 16:29:38,J3 Bow (No Crossbow),,Open,16:29,Wed
-2025-09-24 16:29:38,J4 Bow (No Crossbow),,Open,16:29,Wed
-2025-09-24 16:29:38,J5 Bow (No Crossbow),,Open,16:29,Wed
-2025-09-24 16:29:38,K Bow (No Crossbow),,Closed,16:29,Wed
-2025-09-24 16:29:38,L,,Closed,16:29,Wed
-2025-09-24 16:29:38,Lake Frederick,,Open,16:29,Wed
-2025-09-24 16:29:38,Lake Georgina,,Open,16:29,Wed
-2025-09-24 16:29:38,Lusk Pond,,Open,16:29,Wed
-2025-09-24 16:29:38,M,,Open,16:29,Wed
-2025-09-24 16:29:38,Mine Lake,,Open,16:29,Wed
-2025-09-24 16:29:38,Mine Torne Road,,Open,16:29,Wed
-2025-09-24 16:29:38,N,,Closed,16:29,Wed
-2025-09-24 16:29:38,O,,Open,16:29,Wed
-2025-09-24 16:29:38,P,,Closed,16:29,Wed
-2025-09-24 16:29:38,Popolopen Lake,,Open,16:29,Wed
-2025-09-24 16:29:38,Q,,Open,16:29,Wed
-2025-09-24 16:29:38,R,,Closed,16:29,Wed
-2025-09-24 16:29:38,R - Disabled Hunting,,Closed,16:29,Wed
-2025-09-24 16:29:38,RP Bow (No Crossbow),,Open,16:29,Wed
-2025-09-24 16:29:38,Round Pond,,Open,16:29,Wed
-2025-09-24 16:29:38,S,,Open,16:29,Wed
-2025-09-24 16:29:38,Stilwell Lake,,Open,16:29,Wed
-2025-09-24 16:29:38,T1,,Open,16:29,Wed
-2025-09-24 16:29:38,T2,,Closed,16:29,Wed
-2025-09-24 16:29:38,U1,,Open,16:29,Wed
-2025-09-24 16:29:38,U2,,Closed,16:29,Wed
-2025-09-24 16:29:38,V/W Bow (No Crossbow),,Open,16:29,Wed
-2025-09-24 16:29:38,Weyants Pond,,Closed,16:29,Wed
-2025-09-24 16:29:38,Wilkins Pond,,Open,16:29,Wed
-2025-09-24 16:29:38,X,,Closed,16:29,Wed
-2025-09-24 16:29:38,Y,,Closed,16:29,Wed
-2025-09-24 16:29:38,Z1,,Closed,16:29,Wed
-2025-09-24 16:29:38,Z2,,Open,16:29,Wed
-2025-09-24 16:29:38,Z4,,Closed,16:29,Wed
-2025-09-24 16:29:38,Z5,,Closed,16:29,Wed
-2025-09-24 16:29:38,Z6,,Open,16:29,Wed
+Timestamp_ET,Area,Occupancy,Status,Num In,Hour,Weekday
+2025-09-25 12:32:32,A1,,Open,,12:32,Thu
+2025-09-25 12:32:32,A2,,Open,,12:32,Thu
+2025-09-25 12:32:32,A3 Bow (No Crossbow),,Open,,12:32,Thu
+2025-09-25 12:32:32,B,,Closed,,12:32,Thu
+2025-09-25 12:32:32,Beaver Pond,,Open,,12:32,Thu
+2025-09-25 12:32:32,Brooks Hollow,,Open,,12:32,Thu
+2025-09-25 12:32:32,Buckner Bow (No Crossbow),,Open,,12:32,Thu
+2025-09-25 12:32:32,Bull Pond,,Open,,12:32,Thu
+2025-09-25 12:32:32,C,,Open,,12:32,Thu
+2025-09-25 12:32:32,CS,,Closed,,12:32,Thu
+2025-09-25 12:32:32,CS 2 Bow (No Crossbow),,Closed,,12:32,Thu
+2025-09-25 12:32:32,Constitution Island,,Closed,,12:32,Thu
+2025-09-25 12:32:32,Cragston Lakes,,Open,,12:32,Thu
+2025-09-25 12:32:32,Cranberry Pond,,Closed,,12:32,Thu
+2025-09-25 12:32:32,D1,,Open,,12:32,Thu
+2025-09-25 12:32:32,D2,,Open,,12:32,Thu
+2025-09-25 12:32:32,D3,,Open,,12:32,Thu
+2025-09-25 12:32:32,E1,,Open,,12:32,Thu
+2025-09-25 12:32:32,E2,,Closed,,12:32,Thu
+2025-09-25 12:32:32,F,,Open,,12:32,Thu
+2025-09-25 12:32:32,FA - Popolopen Brook - Downstream from Weyants Bridge,,Closed,,12:32,Thu
+2025-09-25 12:32:32,FA - Popolopen Brook - Upstream from Weyants Bridge,,Open,,12:32,Thu
+2025-09-25 12:32:32,Firewood Collection - Garrard Rd,,Open,,12:32,Thu
+2025-09-25 12:32:32,G1,,Open,,12:32,Thu
+2025-09-25 12:32:32,G2 Bow (No Crossbow),,Open,,12:32,Thu
+2025-09-25 12:32:32,H,,Open,,12:32,Thu
+2025-09-25 12:32:32,I,,Closed,,12:32,Thu
+2025-09-25 12:32:32,J1 Bow (No Crossbow),,Open,,12:32,Thu
+2025-09-25 12:32:32,J2 Bow (No Crossbow),,Open,,12:32,Thu
+2025-09-25 12:32:32,J3 Bow (No Crossbow),,Open,,12:32,Thu
+2025-09-25 12:32:32,J4 Bow (No Crossbow),,Open,,12:32,Thu
+2025-09-25 12:32:32,J5 Bow (No Crossbow),,Open,,12:32,Thu
+2025-09-25 12:32:32,K Bow (No Crossbow),,Closed,,12:32,Thu
+2025-09-25 12:32:32,L,,Closed,,12:32,Thu
+2025-09-25 12:32:32,Lake Frederick,,Open,,12:32,Thu
+2025-09-25 12:32:32,Lake Georgina,,Open,,12:32,Thu
+2025-09-25 12:32:32,Lusk Pond,,Open,,12:32,Thu
+2025-09-25 12:32:32,M,,Open,,12:32,Thu
+2025-09-25 12:32:32,Mine Lake,,Open,,12:32,Thu
+2025-09-25 12:32:32,Mine Torne Road,,Open,,12:32,Thu
+2025-09-25 12:32:32,N,,Closed,,12:32,Thu
+2025-09-25 12:32:32,O,,Open,,12:32,Thu
+2025-09-25 12:32:32,P,,Closed,,12:32,Thu
+2025-09-25 12:32:32,Popolopen Lake,,Open,,12:32,Thu
+2025-09-25 12:32:32,Q,,Open,,12:32,Thu
+2025-09-25 12:32:32,R,,Closed,,12:32,Thu
+2025-09-25 12:32:32,R - Disabled Hunting,,Closed,,12:32,Thu
+2025-09-25 12:32:32,RP Bow (No Crossbow),,Open,,12:32,Thu
+2025-09-25 12:32:32,Round Pond,,Open,,12:32,Thu
+2025-09-25 12:32:32,S,,Open,,12:32,Thu
+2025-09-25 12:32:32,Stilwell Lake,,Open,,12:32,Thu
+2025-09-25 12:32:32,T1,,Open,,12:32,Thu
+2025-09-25 12:32:32,T2,,Closed,,12:32,Thu
+2025-09-25 12:32:32,U1,,Open,,12:32,Thu
+2025-09-25 12:32:32,U2,,Closed,,12:32,Thu
+2025-09-25 12:32:32,V/W Bow (No Crossbow),,Open,,12:32,Thu
+2025-09-25 12:32:32,Weyants Pond,,Closed,,12:32,Thu
+2025-09-25 12:32:32,Wilkins Pond,,Open,,12:32,Thu
+2025-09-25 12:32:32,X,,Closed,,12:32,Thu
+2025-09-25 12:32:32,Y,,Closed,,12:32,Thu
+2025-09-25 12:32:32,Z1,,Closed,,12:32,Thu
+2025-09-25 12:32:32,Z2,,Open,,12:32,Thu
+2025-09-25 12:32:32,Z4,,Closed,,12:32,Thu
+2025-09-25 12:32:32,Z5,,Closed,,12:32,Thu
+2025-09-25 12:32:32,Z6,,Open,,12:32,Thu
