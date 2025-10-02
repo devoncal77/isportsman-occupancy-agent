@@ -2,8 +2,8 @@ name: iSportsman Occupancy Logger
 
 on:
   schedule:
-    # 12:00 and 16:00 America/New_York = 16:00 & 20:00 UTC
-    - cron: "0 16,20 * * *"
+    # 08:00 and 16:00 America/New_York = 16:00 & 20:00 UTC
+    - cron: "0 12,20 * * *"
   workflow_dispatch: {}
 
 permissions:
