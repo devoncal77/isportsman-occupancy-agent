@@ -1,66 +1,67 @@
 Timestamp_ET,Area,Occupancy,Status,Num In,Hour,Weekday
-2026-04-06 09:24:05,A1,,Open,,09:24,Mon
-2026-04-06 09:24:05,A2,,Open,,09:24,Mon
-2026-04-06 09:24:05,A3 Bow (No Crossbow),,Open,,09:24,Mon
-2026-04-06 09:24:05,B,,Closed,,09:24,Mon
-2026-04-06 09:24:05,Beaver Pond,,Open,,09:24,Mon
-2026-04-06 09:24:05,Brooks Hollow,,Open,,09:24,Mon
-2026-04-06 09:24:05,Buckner Bow (No Crossbow),,Open,,09:24,Mon
-2026-04-06 09:24:05,Bull Pond,,Open,,09:24,Mon
-2026-04-06 09:24:05,C,,Open,,09:24,Mon
-2026-04-06 09:24:05,CS,,Closed,,09:24,Mon
-2026-04-06 09:24:05,CS 2 Bow (No Crossbow),,Closed,,09:24,Mon
-2026-04-06 09:24:05,Constitution Island,,Open,,09:24,Mon
-2026-04-06 09:24:05,Cragston Lakes,,Open,,09:24,Mon
-2026-04-06 09:24:05,Cranberry Pond,,Closed,,09:24,Mon
-2026-04-06 09:24:05,D1,,Closed,,09:24,Mon
-2026-04-06 09:24:05,D2,,Closed,,09:24,Mon
-2026-04-06 09:24:05,D3,,Closed,,09:24,Mon
-2026-04-06 09:24:05,E1,,Closed,,09:24,Mon
-2026-04-06 09:24:05,E2,,Closed,,09:24,Mon
-2026-04-06 09:24:05,F,,Open,,09:24,Mon
-2026-04-06 09:24:05,FA - Popolopen Brook - Downstream from Weyants Bridge,,Closed,,09:24,Mon
-2026-04-06 09:24:05,FA - Popolopen Brook - Upstream from Weyants Bridge,,Open,,09:24,Mon
-2026-04-06 09:24:05,Firewood Collection - Garrard Rd,,Open,,09:24,Mon
-2026-04-06 09:24:05,G1,,Open,,09:24,Mon
-2026-04-06 09:24:05,G2 Bow (No Crossbow),,Open,,09:24,Mon
-2026-04-06 09:24:05,H,,Open,,09:24,Mon
-2026-04-06 09:24:05,I,,Closed,,09:24,Mon
-2026-04-06 09:24:05,J1 Bow (No Crossbow),,Open,,09:24,Mon
-2026-04-06 09:24:05,J2 Bow (No Crossbow),,Open,,09:24,Mon
-2026-04-06 09:24:05,J3 Bow (No Crossbow),,Open,,09:24,Mon
-2026-04-06 09:24:05,J4 Bow (No Crossbow),,Open,,09:24,Mon
-2026-04-06 09:24:05,J5 Bow (No Crossbow),,Open,,09:24,Mon
-2026-04-06 09:24:05,K Bow (No Crossbow),,Closed,,09:24,Mon
-2026-04-06 09:24:05,L,,Closed,,09:24,Mon
-2026-04-06 09:24:05,Lake Frederick,,Open,,09:24,Mon
-2026-04-06 09:24:05,Lake Georgina,,Open,,09:24,Mon
-2026-04-06 09:24:05,Lusk Pond,,Open,,09:24,Mon
-2026-04-06 09:24:05,M,,Closed,,09:24,Mon
-2026-04-06 09:24:05,Mine Lake,,Open,,09:24,Mon
-2026-04-06 09:24:05,Mine Torne Road,,Open,,09:24,Mon
-2026-04-06 09:24:05,N,,Open,,09:24,Mon
-2026-04-06 09:24:05,O,,Open,,09:24,Mon
-2026-04-06 09:24:05,P,,Closed,,09:24,Mon
-2026-04-06 09:24:05,Popolopen Lake,,Open,,09:24,Mon
-2026-04-06 09:24:05,Q,,Open,,09:24,Mon
-2026-04-06 09:24:05,R,,Closed,,09:24,Mon
-2026-04-06 09:24:05,R - Disabled Hunting,,Closed,,09:24,Mon
-2026-04-06 09:24:05,RP Bow (No Crossbow),,Open,,09:24,Mon
-2026-04-06 09:24:05,Round Pond,,Open,,09:24,Mon
-2026-04-06 09:24:05,S,,Closed,,09:24,Mon
-2026-04-06 09:24:05,Stilwell Lake,,Open,,09:24,Mon
-2026-04-06 09:24:05,T1,,Open,,09:24,Mon
-2026-04-06 09:24:05,T2,,Closed,,09:24,Mon
-2026-04-06 09:24:05,U1,,Open,,09:24,Mon
-2026-04-06 09:24:05,U2,,Closed,,09:24,Mon
-2026-04-06 09:24:05,V/W Bow (No Crossbow),,Open,,09:24,Mon
-2026-04-06 09:24:05,Weyants Pond,,Open,,09:24,Mon
-2026-04-06 09:24:05,Wilkins Pond,,Open,,09:24,Mon
-2026-04-06 09:24:05,X,,Closed,,09:24,Mon
-2026-04-06 09:24:05,Y,,Closed,,09:24,Mon
-2026-04-06 09:24:05,Z1,,Closed,,09:24,Mon
-2026-04-06 09:24:05,Z2,,Closed,,09:24,Mon
-2026-04-06 09:24:05,Z4,,Closed,,09:24,Mon
-2026-04-06 09:24:05,Z5,,Closed,,09:24,Mon
-2026-04-06 09:24:05,Z6,,Open,,09:24,Mon
+2026-04-06 16:43:57,A1,,Open,,16:43,Mon
+2026-04-06 16:43:57,A2,,Open,,16:43,Mon
+2026-04-06 16:43:57,A3 Bow (No Crossbow),,Open,,16:43,Mon
+2026-04-06 16:43:57,B,,Closed,,16:43,Mon
+2026-04-06 16:43:57,Beaver Pond,,Open,,16:43,Mon
+2026-04-06 16:43:57,Brooks Hollow,,Open,,16:43,Mon
+2026-04-06 16:43:57,Buckner Bow (No Crossbow),,Open,,16:43,Mon
+2026-04-06 16:43:57,Bull Pond,,Open,,16:43,Mon
+2026-04-06 16:43:57,C,,Open,,16:43,Mon
+2026-04-06 16:43:57,CS,,Closed,,16:43,Mon
+2026-04-06 16:43:57,CS 2 Bow (No Crossbow),,Closed,,16:43,Mon
+2026-04-06 16:43:57,Constitution Island,,Open,,16:43,Mon
+2026-04-06 16:43:57,Cragston Lakes,,Open,,16:43,Mon
+2026-04-06 16:43:57,Cranberry Pond,,Closed,,16:43,Mon
+2026-04-06 16:43:57,D1,,Closed,,16:43,Mon
+2026-04-06 16:43:57,D2,,Closed,,16:43,Mon
+2026-04-06 16:43:57,D3,,Closed,,16:43,Mon
+2026-04-06 16:43:57,E1,,Closed,,16:43,Mon
+2026-04-06 16:43:57,E2,,Closed,,16:43,Mon
+2026-04-06 16:43:57,F,,Open,,16:43,Mon
+2026-04-06 16:43:57,FA - Popolopen Brook - Downstream from Weyants Bridge,,Closed,,16:43,Mon
+2026-04-06 16:43:57,FA - Popolopen Brook - Upstream from Weyants Bridge,,Open,,16:43,Mon
+2026-04-06 16:43:57,Firewood Collection - Garrard Rd,,Open,,16:43,Mon
+2026-04-06 16:43:57,G1,,Open,,16:43,Mon
+2026-04-06 16:43:57,G2 Bow (No Crossbow),,Open,,16:43,Mon
+2026-04-06 16:43:57,H,,Open,,16:43,Mon
+2026-04-06 16:43:57,I,,Closed,,16:43,Mon
+2026-04-06 16:43:57,J1 Bow (No Crossbow),,Open,,16:43,Mon
+2026-04-06 16:43:57,J2 Bow (No Crossbow),,Open,,16:43,Mon
+2026-04-06 16:43:57,J3 Bow (No Crossbow),,Open,,16:43,Mon
+2026-04-06 16:43:57,J4 Bow (No Crossbow),,Open,,16:43,Mon
+2026-04-06 16:43:57,J5 Bow (No Crossbow),,Open,,16:43,Mon
+2026-04-06 16:43:57,K Bow (No Crossbow),,Closed,,16:43,Mon
+2026-04-06 16:43:57,L,,Closed,,16:43,Mon
+2026-04-06 16:43:57,Lake Frederick,,Open,,16:43,Mon
+2026-04-06 16:43:57,Lake Georgina,,Open,,16:43,Mon
+2026-04-06 16:43:57,Long Pond,,Closed,,16:43,Mon
+2026-04-06 16:43:57,Lusk Pond,,Open,,16:43,Mon
+2026-04-06 16:43:57,M,,Closed,,16:43,Mon
+2026-04-06 16:43:57,Mine Lake,,Open,,16:43,Mon
+2026-04-06 16:43:57,Mine Torne Road,,Open,,16:43,Mon
+2026-04-06 16:43:57,N,,Open,,16:43,Mon
+2026-04-06 16:43:57,O,,Open,,16:43,Mon
+2026-04-06 16:43:57,P,,Closed,,16:43,Mon
+2026-04-06 16:43:57,Popolopen Lake,,Open,,16:43,Mon
+2026-04-06 16:43:57,Q,,Open,,16:43,Mon
+2026-04-06 16:43:57,R,,Closed,,16:43,Mon
+2026-04-06 16:43:57,R - Disabled Hunting,,Closed,,16:43,Mon
+2026-04-06 16:43:57,RP Bow (No Crossbow),,Open,,16:43,Mon
+2026-04-06 16:43:57,Round Pond,,Open,,16:43,Mon
+2026-04-06 16:43:57,S,,Closed,,16:43,Mon
+2026-04-06 16:43:57,Stilwell Lake,,Open,,16:43,Mon
+2026-04-06 16:43:57,T1,,Open,,16:43,Mon
+2026-04-06 16:43:57,T2,,Closed,,16:43,Mon
+2026-04-06 16:43:57,U1,,Open,,16:43,Mon
+2026-04-06 16:43:57,U2,,Closed,,16:43,Mon
+2026-04-06 16:43:57,V/W Bow (No Crossbow),,Open,,16:43,Mon
+2026-04-06 16:43:57,Weyants Pond,,Open,,16:43,Mon
+2026-04-06 16:43:57,Wilkins Pond,,Open,,16:43,Mon
+2026-04-06 16:43:57,X,,Closed,,16:43,Mon
+2026-04-06 16:43:57,Y,,Closed,,16:43,Mon
+2026-04-06 16:43:57,Z1,,Closed,,16:43,Mon
+2026-04-06 16:43:57,Z2,,Closed,,16:43,Mon
+2026-04-06 16:43:57,Z4,,Closed,,16:43,Mon
+2026-04-06 16:43:57,Z5,,Closed,,16:43,Mon
+2026-04-06 16:43:57,Z6,,Open,,16:43,Mon
