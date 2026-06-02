@@ -70,7 +70,7 @@ The dashboard build publishes:
 | --- | --- |
 | `index.html` | Interactive dashboard app |
 | `dashboard_data.json` | Cleaned records used by the dashboard |
-| `area_summary.csv` | Per-area total usage, average, usage rate, peak value, latest value, and sample count |
+| `area_summary.csv` | Per-area occupied scrape count, total occupancy, average, usage rate, peak value, latest value, and sample count |
 | `latest_snapshot.csv` | Most recent scrape only |
 | `occupancy_log_export.csv` | Full cleaned export from the sheet |
 
@@ -78,8 +78,8 @@ The dashboard includes:
 
 - Quick date-range controls plus custom start and end dates.
 - Run-time, area, ranking, top-count, and area-search filters.
-- Top usage chart showing the highest-use areas in the selected time period.
-- Area ranking by total usage, average occupancy, usage rate, peak occupancy, or sample count.
+- Top usage chart showing the areas occupied most often in the selected time period.
+- Area ranking by times occupied, total occupancy, average occupancy, usage rate, peak occupancy, or sample count.
 - Usage percentage for each area.
 - Trends for the top-use candidates in the selected filter.
 - Heatmap by area and scrape time.

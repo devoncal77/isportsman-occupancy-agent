@@ -84,6 +84,7 @@ def build_area_summary(df):
                 "MaxOccupancy",
                 "ZeroRate",
                 "UsageRate",
+                "OccupiedSamples",
                 "TotalOccupancy",
                 "LatestOccupancy",
                 "LatestStatus",
@@ -104,11 +105,12 @@ def build_area_summary(df):
             "MaxOccupancy": grouped.max().round(2).values,
             "ZeroRate": grouped.apply(lambda s: round(float((s == 0).mean()), 3)).values,
             "UsageRate": grouped.apply(lambda s: round(float((s > 0).mean()), 3)).values,
+            "OccupiedSamples": grouped.apply(lambda s: int((s > 0).sum())).values,
             "TotalOccupancy": grouped.sum().round(2).values,
         }
     )
     return summary.merge(latest, on="Area", how="left").sort_values(
-        ["TotalOccupancy", "AvgOccupancy", "Area"], ascending=[False, False, True]
+        ["OccupiedSamples", "TotalOccupancy", "Area"], ascending=[False, False, True]
     )
 
 
@@ -361,7 +363,8 @@ def index_html():
       <div>
         <label for="sort">Rank By</label>
         <select id="sort">
-          <option value="total" selected>Total usage</option>
+          <option value="occupied" selected>Times occupied</option>
+          <option value="total">Total occupancy</option>
           <option value="avg">Average occupancy</option>
           <option value="rate">Usage rate</option>
           <option value="peak">Peak occupancy</option>
@@ -424,6 +427,7 @@ def index_html():
               <thead>
                 <tr>
                   <th>Area</th>
+                  <th class="num">Times</th>
                   <th class="num">Total</th>
                   <th class="num">Avg</th>
                   <th class="num">Used %</th>
@@ -584,11 +588,12 @@ def index_html():
 
       const sort = qs("sort").value;
       return stats.sort((a, b) => {
-        if (sort === "avg") return (b.avg ?? -1) - (a.avg ?? -1) || b.total - a.total;
-        if (sort === "rate") return b.usageRate - a.usageRate || b.total - a.total;
-        if (sort === "peak") return (b.max ?? -1) - (a.max ?? -1) || b.total - a.total;
-        if (sort === "samples") return b.samples - a.samples || b.total - a.total;
-        return b.total - a.total || (b.avg ?? -1) - (a.avg ?? -1);
+        if (sort === "total") return b.total - a.total || b.activeSamples - a.activeSamples;
+        if (sort === "avg") return (b.avg ?? -1) - (a.avg ?? -1) || b.activeSamples - a.activeSamples;
+        if (sort === "rate") return b.usageRate - a.usageRate || b.activeSamples - a.activeSamples;
+        if (sort === "peak") return (b.max ?? -1) - (a.max ?? -1) || b.activeSamples - a.activeSamples;
+        if (sort === "samples") return b.samples - a.samples || b.activeSamples - a.activeSamples;
+        return b.activeSamples - a.activeSamples || b.total - a.total;
       });
     }
 
@@ -602,15 +607,15 @@ def index_html():
       const areas = new Set(records.map((r) => r.area)).size;
       const latestTotal = latest.reduce((sum, r) => sum + (Number.isFinite(r.occupancy) ? r.occupancy : 0), 0);
       const totalUsage = records.reduce((sum, r) => sum + (Number.isFinite(r.occupancy) ? r.occupancy : 0), 0);
-      const usedSamples = records.filter((r) => r.occupancy > 0).length;
+      const occupiedScrapes = records.filter((r) => r.occupancy > 0).length;
       const average = avg(records.map((r) => r.occupancy));
       const dates = records.map((r) => parseTs(r).getTime());
       const spanDays = dates.length ? Math.max(1, Math.round((Math.max(...dates) - Math.min(...dates)) / 86400000) + 1) : 0;
 
       const cards = [
-        ["Total Usage", fmt.format(totalUsage), "sum of occupancy"],
+        ["Times Occupied", fmt.format(occupiedScrapes), "scrapes above zero"],
+        ["Total Occupancy", fmt.format(totalUsage), "sum of occupancy"],
         ["Latest Total", fmt.format(latestTotal), "people checked in"],
-        ["Used Samples", usedSamples, "rows above zero"],
         ["Areas", areas, "in current filter"],
         ["Avg Occupancy", average == null ? "n/a" : fmt.format(average), "per area sample"],
         ["Date Span", spanDays, "days represented"],
@@ -630,13 +635,13 @@ def index_html():
       qs("usage-note").textContent = `${top.length} areas shown`;
       Plotly.newPlot("usage-chart", [{
         type: "bar",
-        x: top.map((s) => s.total),
+        x: top.map((s) => s.activeSamples),
         y: top.map((s) => s.area),
         orientation: "h",
-        customdata: top.map((s) => [s.avg, s.usageRate, s.max, s.samples]),
+        customdata: top.map((s) => [s.total, s.avg, s.usageRate, s.max, s.samples]),
         marker: { color: "#0969da" },
-        hovertemplate: "Area %{y}<br>Total usage: %{x:.1f}<br>Avg: %{customdata[0]:.1f}<br>Used: %{customdata[1]:.0%}<br>Peak: %{customdata[2]:.1f}<br>Samples: %{customdata[3]}<extra></extra>"
-      }], layout("Top Areas by Total Usage", { xaxis: { title: "Total occupancy" }, yaxis: { automargin: true, autorange: "reversed" } }), config());
+        hovertemplate: "Area %{y}<br>Times occupied: %{x}<br>Total occupancy: %{customdata[0]:.1f}<br>Avg: %{customdata[1]:.1f}<br>Used: %{customdata[2]:.0%}<br>Peak: %{customdata[3]:.1f}<br>Samples: %{customdata[4]}<extra></extra>"
+      }], layout("Top Areas by Times Occupied", { xaxis: { title: "Scrapes with occupancy greater than zero" }, yaxis: { automargin: true, autorange: "reversed" } }), config());
     }
 
     function plotTrends(records, stats) {
@@ -689,6 +694,7 @@ def index_html():
       qs("summary-body").innerHTML = selectedStats(stats).slice(0, 75).map((s) => `
         <tr>
           <td>${esc(s.area)}</td>
+          <td class="num">${s.activeSamples}</td>
           <td class="num">${fmt.format(s.total)}</td>
           <td class="num">${s.avg == null ? "" : fmt.format(s.avg)}</td>
           <td class="num">${pct(s.usageRate)}</td>
