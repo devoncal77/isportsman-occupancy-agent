@@ -83,6 +83,8 @@ def build_area_summary(df):
                 "MedianOccupancy",
                 "MaxOccupancy",
                 "ZeroRate",
+                "UsageRate",
+                "TotalOccupancy",
                 "LatestOccupancy",
                 "LatestStatus",
             ]
@@ -101,10 +103,12 @@ def build_area_summary(df):
             "MedianOccupancy": grouped.median().round(2).values,
             "MaxOccupancy": grouped.max().round(2).values,
             "ZeroRate": grouped.apply(lambda s: round(float((s == 0).mean()), 3)).values,
+            "UsageRate": grouped.apply(lambda s: round(float((s > 0).mean()), 3)).values,
+            "TotalOccupancy": grouped.sum().round(2).values,
         }
     )
     return summary.merge(latest, on="Area", how="left").sort_values(
-        ["AvgOccupancy", "ZeroRate", "Area"], ascending=[True, False, True]
+        ["TotalOccupancy", "AvgOccupancy", "Area"], ascending=[False, False, True]
     )
 
 
@@ -195,7 +199,7 @@ def index_html():
     }
     .filters {
       display: grid;
-      grid-template-columns: repeat(5, minmax(130px, 1fr));
+      grid-template-columns: repeat(7, minmax(120px, 1fr));
       gap: 10px;
       background: var(--panel);
       border: 1px solid var(--line);
@@ -313,7 +317,7 @@ def index_html():
   <main>
     <header>
       <div>
-        <h1>iSportsman Occupancy Dashboard</h1>
+        <h1>iSportsman Usage Dashboard</h1>
         <div class="muted" id="subtitle">Loading occupancy history...</div>
       </div>
       <nav class="actions">
@@ -325,7 +329,7 @@ def index_html():
 
     <section class="filters">
       <div>
-        <label for="range">Date Range</label>
+        <label for="range">Quick Range</label>
         <select id="range">
           <option value="30">Last 30 days</option>
           <option value="90" selected>Last 90 days</option>
@@ -333,6 +337,14 @@ def index_html():
           <option value="365">Last year</option>
           <option value="all">All history</option>
         </select>
+      </div>
+      <div>
+        <label for="start-date">Start Date</label>
+        <input id="start-date" type="date">
+      </div>
+      <div>
+        <label for="end-date">End Date</label>
+        <input id="end-date" type="date">
       </div>
       <div>
         <label for="hour">Run Time</label>
@@ -349,10 +361,21 @@ def index_html():
       <div>
         <label for="sort">Rank By</label>
         <select id="sort">
-          <option value="available">Most often open</option>
-          <option value="avg">Lowest average occupancy</option>
-          <option value="latest">Lowest latest occupancy</option>
+          <option value="total" selected>Total usage</option>
+          <option value="avg">Average occupancy</option>
+          <option value="rate">Usage rate</option>
+          <option value="peak">Peak occupancy</option>
           <option value="samples">Most samples</option>
+        </select>
+      </div>
+      <div>
+        <label for="top-count">Show Top</label>
+        <select id="top-count">
+          <option value="5">Top 5</option>
+          <option value="10" selected>Top 10</option>
+          <option value="15">Top 15</option>
+          <option value="25">Top 25</option>
+          <option value="all">All areas</option>
         </select>
       </div>
       <div>
@@ -367,16 +390,16 @@ def index_html():
       <div>
         <section class="panel">
           <div class="panel-head">
-            <h2>Latest Snapshot</h2>
-            <span class="muted" id="latest-note"></span>
+            <h2>Top Usage Areas</h2>
+            <span class="muted" id="usage-note"></span>
           </div>
-          <div id="latest-chart" class="chart"></div>
+          <div id="usage-chart" class="chart"></div>
         </section>
 
         <section class="panel">
           <div class="panel-head">
-            <h2>Occupancy Trends</h2>
-            <span class="muted">Lowest-use areas in the current filter</span>
+            <h2>Usage Trends</h2>
+            <span class="muted">Top areas in the current time period</span>
           </div>
           <div id="trend-chart" class="chart"></div>
         </section>
@@ -393,7 +416,7 @@ def index_html():
       <aside>
         <section class="panel">
           <div class="panel-head">
-            <h2>Best Bets</h2>
+            <h2>Top Usage Ranking</h2>
             <span class="muted">Ranked from filtered history</span>
           </div>
           <div class="table-wrap">
@@ -401,8 +424,10 @@ def index_html():
               <thead>
                 <tr>
                   <th>Area</th>
+                  <th class="num">Total</th>
                   <th class="num">Avg</th>
-                  <th class="num">Open %</th>
+                  <th class="num">Used %</th>
+                  <th class="num">Peak</th>
                   <th class="num">Latest</th>
                   <th class="num">Samples</th>
                 </tr>
@@ -481,9 +506,16 @@ def index_html():
     function populateControls() {
       const hours = [...new Set(state.records.map((r) => r.hour))].sort();
       const areas = [...new Set(state.records.map((r) => r.area))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+      const dates = state.records.map((r) => r.date).sort();
 
       qs("hour").innerHTML = '<option value="all">All run times</option>' + hours.map((h) => `<option value="${esc(h)}">${esc(h)}</option>`).join("");
       qs("area").innerHTML = '<option value="all">All areas</option>' + areas.map((a) => `<option value="${esc(a)}">${esc(a)}</option>`).join("");
+      if (dates.length) {
+        qs("start-date").min = dates[0];
+        qs("start-date").max = dates[dates.length - 1];
+        qs("end-date").min = dates[0];
+        qs("end-date").max = dates[dates.length - 1];
+      }
     }
 
     function filteredRecords() {
@@ -491,10 +523,15 @@ def index_html():
       const hour = qs("hour").value;
       const area = qs("area").value;
       const search = qs("search").value.trim().toLowerCase();
+      const startDate = qs("start-date").value;
+      const endDate = qs("end-date").value;
+      const usingCustomDates = Boolean(startDate || endDate);
       const latest = state.records.reduce((max, r) => Math.max(max, parseTs(r).getTime()), 0);
 
       return state.records.filter((r) => {
-        if (range !== "all") {
+        if (startDate && r.date < startDate) return false;
+        if (endDate && r.date > endDate) return false;
+        if (!usingCustomDates && range !== "all") {
           const days = Number(range);
           const ageMs = latest - parseTs(r).getTime();
           if (ageMs > days * 24 * 60 * 60 * 1000) return false;
@@ -526,13 +563,19 @@ def index_html():
         const values = rows.map((r) => r.occupancy).filter(Number.isFinite);
         const average = avg(values);
         const openRate = values.length ? values.filter((v) => v === 0).length / values.length : 0;
+        const activeSamples = values.filter((v) => v > 0).length;
+        const usageRate = values.length ? activeSamples / values.length : 0;
+        const total = values.reduce((sum, value) => sum + value, 0);
         const max = values.length ? Math.max(...values) : null;
         const latestRow = latestByArea.get(area);
         stats.push({
           area,
           samples: values.length,
+          activeSamples,
+          total,
           avg: average,
           openRate,
+          usageRate,
           max,
           latest: latestRow ? latestRow.occupancy : null,
           latestStatus: latestRow ? latestRow.status : "",
@@ -541,28 +584,35 @@ def index_html():
 
       const sort = qs("sort").value;
       return stats.sort((a, b) => {
-        if (sort === "avg") return (a.avg ?? 9999) - (b.avg ?? 9999) || b.openRate - a.openRate;
-        if (sort === "latest") return (a.latest ?? 9999) - (b.latest ?? 9999) || (a.avg ?? 9999) - (b.avg ?? 9999);
-        if (sort === "samples") return b.samples - a.samples || (a.avg ?? 9999) - (b.avg ?? 9999);
-        return b.openRate - a.openRate || (a.avg ?? 9999) - (b.avg ?? 9999);
+        if (sort === "avg") return (b.avg ?? -1) - (a.avg ?? -1) || b.total - a.total;
+        if (sort === "rate") return b.usageRate - a.usageRate || b.total - a.total;
+        if (sort === "peak") return (b.max ?? -1) - (a.max ?? -1) || b.total - a.total;
+        if (sort === "samples") return b.samples - a.samples || b.total - a.total;
+        return b.total - a.total || (b.avg ?? -1) - (a.avg ?? -1);
       });
+    }
+
+    function selectedStats(stats) {
+      const count = qs("top-count").value;
+      return count === "all" ? stats : stats.slice(0, Number(count));
     }
 
     function renderMetrics(records) {
       const latest = latestRecords(records);
       const areas = new Set(records.map((r) => r.area)).size;
       const latestTotal = latest.reduce((sum, r) => sum + (Number.isFinite(r.occupancy) ? r.occupancy : 0), 0);
-      const latestOpen = latest.filter((r) => r.occupancy === 0).length;
+      const totalUsage = records.reduce((sum, r) => sum + (Number.isFinite(r.occupancy) ? r.occupancy : 0), 0);
+      const usedSamples = records.filter((r) => r.occupancy > 0).length;
       const average = avg(records.map((r) => r.occupancy));
       const dates = records.map((r) => parseTs(r).getTime());
       const spanDays = dates.length ? Math.max(1, Math.round((Math.max(...dates) - Math.min(...dates)) / 86400000) + 1) : 0;
 
       const cards = [
+        ["Total Usage", fmt.format(totalUsage), "sum of occupancy"],
         ["Latest Total", fmt.format(latestTotal), "people checked in"],
-        ["Open Areas", latestOpen, "zero occupancy now"],
+        ["Used Samples", usedSamples, "rows above zero"],
         ["Areas", areas, "in current filter"],
         ["Avg Occupancy", average == null ? "n/a" : fmt.format(average), "per area sample"],
-        ["Samples", records.length, "filtered rows"],
         ["Date Span", spanDays, "days represented"],
       ];
 
@@ -575,20 +625,22 @@ def index_html():
       `).join("");
     }
 
-    function plotLatest(records) {
-      const latest = latestRecords(records);
-      qs("latest-note").textContent = latest.length ? latest[0].ts.replace("T", " ") + " ET" : "";
-      Plotly.newPlot("latest-chart", [{
+    function plotUsage(stats) {
+      const top = selectedStats(stats);
+      qs("usage-note").textContent = `${top.length} areas shown`;
+      Plotly.newPlot("usage-chart", [{
         type: "bar",
-        x: latest.map((r) => r.area),
-        y: latest.map((r) => r.occupancy),
-        marker: { color: latest.map((r) => r.occupancy === 0 ? "#1a7f37" : r.occupancy <= 2 ? "#9a6700" : "#cf222e") },
-        hovertemplate: "%{x}<br>Occupancy: %{y}<extra></extra>"
-      }], layout("Latest Occupancy", { xaxis: { automargin: true }, yaxis: { title: "Occupancy", rangemode: "tozero" } }), config());
+        x: top.map((s) => s.total),
+        y: top.map((s) => s.area),
+        orientation: "h",
+        customdata: top.map((s) => [s.avg, s.usageRate, s.max, s.samples]),
+        marker: { color: "#0969da" },
+        hovertemplate: "Area %{y}<br>Total usage: %{x:.1f}<br>Avg: %{customdata[0]:.1f}<br>Used: %{customdata[1]:.0%}<br>Peak: %{customdata[2]:.1f}<br>Samples: %{customdata[3]}<extra></extra>"
+      }], layout("Top Areas by Total Usage", { xaxis: { title: "Total occupancy" }, yaxis: { automargin: true, autorange: "reversed" } }), config());
     }
 
     function plotTrends(records, stats) {
-      const areas = stats.slice(0, 8).map((s) => s.area);
+      const areas = selectedStats(stats).slice(0, 8).map((s) => s.area);
       const traces = areas.map((area, index) => {
         const rows = records.filter((r) => r.area === area).sort((a, b) => a.ts.localeCompare(b.ts));
         return {
@@ -602,11 +654,11 @@ def index_html():
           hovertemplate: `${area}<br>%{x}<br>Occupancy: %{y}<extra></extra>`
         };
       });
-      Plotly.newPlot("trend-chart", traces, layout("Lowest-Use Area Trends", { yaxis: { title: "Occupancy", rangemode: "tozero" } }), config());
+      Plotly.newPlot("trend-chart", traces, layout("Top Usage Area Trends", { yaxis: { title: "Occupancy", rangemode: "tozero" } }), config());
     }
 
     function plotHeat(records, stats) {
-      const areas = stats.slice(0, 30).map((s) => s.area);
+      const areas = selectedStats(stats).slice(0, 30).map((s) => s.area);
       const hours = [...new Set(records.map((r) => r.hour))].sort();
       const z = areas.map((area) => hours.map((hour) => {
         const rows = records.filter((r) => r.area === area && r.hour === hour);
@@ -634,11 +686,13 @@ def index_html():
     }
 
     function renderTables(records, stats) {
-      qs("summary-body").innerHTML = stats.slice(0, 50).map((s) => `
+      qs("summary-body").innerHTML = selectedStats(stats).slice(0, 75).map((s) => `
         <tr>
           <td>${esc(s.area)}</td>
+          <td class="num">${fmt.format(s.total)}</td>
           <td class="num">${s.avg == null ? "" : fmt.format(s.avg)}</td>
-          <td class="num">${pct(s.openRate)}</td>
+          <td class="num">${pct(s.usageRate)}</td>
+          <td class="num">${s.max == null ? "" : fmt.format(s.max)}</td>
           <td class="num">${s.latest == null ? "" : fmt.format(s.latest)}</td>
           <td class="num">${s.samples}</td>
         </tr>
@@ -673,7 +727,7 @@ def index_html():
       const stats = areaStats(records);
       renderMetrics(records);
       renderTables(records, stats);
-      plotLatest(records);
+      plotUsage(stats);
       plotTrends(records, stats);
       plotHeat(records, stats);
       plotWeekday(records);
@@ -687,7 +741,13 @@ def index_html():
 
       qs("subtitle").textContent = `${state.records.length.toLocaleString()} samples from ${data.firstSampleDate || "n/a"} through ${data.latestRun || "n/a"} ET. Built ${data.generatedAt}.`;
       populateControls();
-      ["range", "hour", "area", "sort", "search"].forEach((id) => qs(id).addEventListener("input", render));
+      qs("range").addEventListener("input", () => {
+        qs("start-date").value = "";
+        qs("end-date").value = "";
+        render();
+      });
+      ["start-date", "end-date"].forEach((id) => qs(id).addEventListener("input", render));
+      ["hour", "area", "sort", "top-count", "search"].forEach((id) => qs(id).addEventListener("input", render));
       render();
     }
 
