@@ -1,0 +1,67 @@
+Area,Samples,AvgOccupancy,MedianOccupancy,MaxOccupancy,ZeroRate,LatestOccupancy,LatestStatus
+A1,1,0.0,0.0,0.0,1.0,0.0,Closed
+A2,1,0.0,0.0,0.0,1.0,0.0,Closed
+A3 Bow (No Crossbow),1,0.0,0.0,0.0,1.0,0.0,Closed
+B,1,0.0,0.0,0.0,1.0,0.0,Closed
+Beaver Pond,1,0.0,0.0,0.0,1.0,0.0,Closed
+Brooks Hollow,1,0.0,0.0,0.0,1.0,0.0,Open
+Buckner Bow (No Crossbow),1,0.0,0.0,0.0,1.0,0.0,Closed
+C,1,0.0,0.0,0.0,1.0,0.0,Closed
+CS,1,0.0,0.0,0.0,1.0,0.0,Closed
+CS 2 Bow (No Crossbow),1,0.0,0.0,0.0,1.0,0.0,Closed
+Constitution Island,1,0.0,0.0,0.0,1.0,0.0,Open
+Cragston Lakes,1,0.0,0.0,0.0,1.0,0.0,Open
+Cranberry Pond,1,0.0,0.0,0.0,1.0,0.0,Closed
+D1,1,0.0,0.0,0.0,1.0,0.0,Closed
+D2,1,0.0,0.0,0.0,1.0,0.0,Closed
+D3,1,0.0,0.0,0.0,1.0,0.0,Closed
+E1,1,0.0,0.0,0.0,1.0,0.0,Open
+E2,1,0.0,0.0,0.0,1.0,0.0,Closed
+F,1,0.0,0.0,0.0,1.0,0.0,Open
+FA - Popolopen Brook - Downstream from Weyants Bridge,1,0.0,0.0,0.0,1.0,0.0,Closed
+FA - Popolopen Brook - Upstream from Weyants Bridge,1,0.0,0.0,0.0,1.0,0.0,Closed
+Firewood Collection - Garrard Rd,1,0.0,0.0,0.0,1.0,0.0,Open
+G1,1,0.0,0.0,0.0,1.0,0.0,Open
+G2 Bow (No Crossbow),1,0.0,0.0,0.0,1.0,0.0,Open
+H,1,0.0,0.0,0.0,1.0,0.0,Closed
+I,1,0.0,0.0,0.0,1.0,0.0,Closed
+J1 Bow (No Crossbow),1,0.0,0.0,0.0,1.0,0.0,Open
+J2 Bow (No Crossbow),1,0.0,0.0,0.0,1.0,0.0,Open
+J3 Bow (No Crossbow),1,0.0,0.0,0.0,1.0,0.0,Open
+J4 Bow (No Crossbow),1,0.0,0.0,0.0,1.0,0.0,Open
+J5 Bow (No Crossbow),1,0.0,0.0,0.0,1.0,0.0,Open
+K Bow (No Crossbow),1,0.0,0.0,0.0,1.0,0.0,Closed
+L,1,0.0,0.0,0.0,1.0,0.0,Closed
+Lake Frederick,1,0.0,0.0,0.0,1.0,0.0,Open
+Lake Georgina,1,0.0,0.0,0.0,1.0,0.0,Open
+Long Pond,1,0.0,0.0,0.0,1.0,0.0,Closed
+Lusk Pond,1,0.0,0.0,0.0,1.0,0.0,Open
+M,1,0.0,0.0,0.0,1.0,0.0,Closed
+Mine Lake,1,0.0,0.0,0.0,1.0,0.0,Open
+Mine Torne Road,1,0.0,0.0,0.0,1.0,0.0,Closed
+N,1,0.0,0.0,0.0,1.0,0.0,Closed
+O,1,0.0,0.0,0.0,1.0,0.0,Closed
+P,1,0.0,0.0,0.0,1.0,0.0,Closed
+Popolopen Lake,1,0.0,0.0,0.0,1.0,0.0,Closed
+Q,1,0.0,0.0,0.0,1.0,0.0,Closed
+R,1,0.0,0.0,0.0,1.0,0.0,Closed
+R - Disabled Hunting,1,0.0,0.0,0.0,1.0,0.0,Closed
+RP Bow (No Crossbow),1,0.0,0.0,0.0,1.0,0.0,Open
+Round Pond,1,0.0,0.0,0.0,1.0,0.0,Open
+S,1,0.0,0.0,0.0,1.0,0.0,Closed
+Stilwell Lake,1,0.0,0.0,0.0,1.0,0.0,Closed
+T1,1,0.0,0.0,0.0,1.0,0.0,Closed
+T2,1,0.0,0.0,0.0,1.0,0.0,Closed
+U1,1,0.0,0.0,0.0,1.0,0.0,Closed
+U2,1,0.0,0.0,0.0,1.0,0.0,Closed
+V/W Bow (No Crossbow),1,0.0,0.0,0.0,1.0,0.0,Open
+Weyants Pond,1,0.0,0.0,0.0,1.0,0.0,Closed
+Wilkins Pond,1,0.0,0.0,0.0,1.0,0.0,Open
+X,1,0.0,0.0,0.0,1.0,0.0,Closed
+Y,1,0.0,0.0,0.0,1.0,0.0,Closed
+Z1,1,0.0,0.0,0.0,1.0,0.0,Closed
+Z2,1,0.0,0.0,0.0,1.0,0.0,Closed
+Z4,1,0.0,0.0,0.0,1.0,0.0,Closed
+Z5,1,0.0,0.0,0.0,1.0,0.0,Closed
+Z6,1,0.0,0.0,0.0,1.0,0.0,Closed
+Bull Pond,1,1.0,1.0,1.0,0.0,1.0,Open
