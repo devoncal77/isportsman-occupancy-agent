@@ -1,6 +1,6 @@
 # iSportsman Occupancy Agent
 
-This project records West Point iSportsman area occupancy twice daily and publishes a simple dashboard from the collected data.
+This project records West Point iSportsman area occupancy twice daily and publishes an interactive dashboard from the collected data.
 
 ## What It Does
 
@@ -9,7 +9,7 @@ The GitHub Actions workflow:
 1. Opens `https://westpoint.isportsman.net/Areas.aspx` in headless Chromium.
 2. Finds the table with `Area`, `Occupancy`, and optional `Status` columns.
 3. Appends rows to a Google Sheet tab named `OccupancyLog`.
-4. Builds a static Plotly dashboard from the sheet.
+4. Builds a static dashboard app from the sheet.
 5. Publishes the dashboard to the `gh-pages` branch.
 
 Rows are appended with this schema:
@@ -68,10 +68,42 @@ The dashboard build publishes:
 
 | File | Purpose |
 | --- | --- |
-| `index.html` | Main dashboard |
-| `avg_by_area.csv` | Average occupancy by area |
+| `index.html` | Interactive dashboard app |
+| `dashboard_data.json` | Cleaned records used by the dashboard |
+| `area_summary.csv` | Per-area average, latest value, sample count, and zero-occupancy rate |
 | `latest_snapshot.csv` | Most recent scrape only |
 | `occupancy_log_export.csv` | Full cleaned export from the sheet |
+
+The dashboard includes:
+
+- Date-range, run-time, area, ranking, and area-search filters.
+- Latest occupancy chart and latest detail table.
+- Area ranking by most often open, lowest average occupancy, latest occupancy, or sample count.
+- Zero-occupancy/open percentage for each area.
+- Trends for the best low-use candidates in the selected filter.
+- Heatmap by area and scrape time.
+- Day-of-week averages.
+
+## Data Storage
+
+Google Sheets is acceptable for this project while the workflow is appending only a few hundred or a few thousand rows per year. It is easy to inspect manually, easy to back up, and already works with your GitHub Actions secret setup.
+
+Consider moving to a database when any of these become true:
+
+- You need multiple dashboards or users querying data heavily.
+- The sheet becomes slow to load or edit.
+- You want stronger data validation, deduplication, or audit trails.
+- You want to join occupancy data with weather, season, hunting dates, or other external datasets.
+
+Good next storage options would be:
+
+| Option | Best Use |
+| --- | --- |
+| SQLite file committed or uploaded as an artifact | Simple historical archive with better querying |
+| Supabase/Postgres | Multi-user dashboard and future app features |
+| BigQuery | Larger analytics workload and scheduled SQL reporting |
+
+For now, this repo keeps Google Sheets as the source of truth and publishes cleaned JSON/CSV files for the dashboard.
 
 ## Troubleshooting
 

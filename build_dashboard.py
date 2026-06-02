@@ -1,13 +1,10 @@
-import html
 import json
 import os
 from pathlib import Path
 
 import gspread
 import pandas as pd
-import plotly.express as px
 from oauth2client.service_account import ServiceAccountCredentials
-from plotly.offline import plot as plot_div
 
 
 SHEET_ID = os.environ["SHEET_ID"]
@@ -47,273 +44,666 @@ def load_df(ws):
     df["Status"] = df["Status"].fillna("").astype(str).str.strip()
     df = df.dropna(subset=["Timestamp_ET", "Area"])
     df = df[df["Area"] != ""]
+    df = df.sort_values(["Timestamp_ET", "Area"])
+    df["Timestamp_ISO"] = df["Timestamp_ET"].dt.strftime("%Y-%m-%dT%H:%M:%S")
+    df["Date"] = df["Timestamp_ET"].dt.strftime("%Y-%m-%d")
     df["Hour"] = df["Timestamp_ET"].dt.strftime("%H:%M")
     df["Weekday"] = df["Timestamp_ET"].dt.strftime("%a")
-    df["Date"] = df["Timestamp_ET"].dt.date
-    return df.sort_values(["Timestamp_ET", "Area"])
+    df["Weekend"] = df["Timestamp_ET"].dt.dayofweek >= 5
+    return df
 
 
-def fig_div(fig):
-    fig.update_layout(
-        margin=dict(l=20, r=20, t=55, b=35),
-        font=dict(family="Arial, sans-serif", size=13),
-        paper_bgcolor="white",
-        plot_bgcolor="white",
-    )
-    return plot_div(fig, include_plotlyjs="cdn", output_type="div")
+def export_records(df):
+    records = []
+    for _, row in df.iterrows():
+        occupancy = None if pd.isna(row["Occupancy"]) else float(row["Occupancy"])
+        records.append(
+            {
+                "ts": row["Timestamp_ISO"],
+                "date": row["Date"],
+                "hour": row["Hour"],
+                "weekday": row["Weekday"],
+                "weekend": bool(row["Weekend"]),
+                "area": row["Area"],
+                "occupancy": occupancy,
+                "status": row["Status"],
+            }
+        )
+    return records
 
 
-def metric_card(label, value, note=""):
-    note_html = f'<span class="note">{html.escape(note)}</span>' if note else ""
-    return f"""
-    <div class="metric">
-      <div class="label">{html.escape(label)}</div>
-      <div class="value">{html.escape(str(value))}</div>
-      {note_html}
-    </div>
-    """
-
-
-def render_empty_site():
-    html_doc = f"""<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>iSportsman Occupancy Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>{base_css()}</style>
-</head>
-<body>
-  <main>
-    <h1>iSportsman Occupancy Dashboard</h1>
-    <p class="muted">No rows are available in {html.escape(SHEET_TAB_NAME)} yet.</p>
-  </main>
-</body>
-</html>"""
-    (SITE_DIR / "index.html").write_text(html_doc, encoding="utf-8")
-
-
-def base_css():
-    return """
-body {
-  margin: 0;
-  color: #17202a;
-  background: #f6f8fa;
-  font-family: Arial, sans-serif;
-}
-main {
-  width: min(1180px, calc(100% - 32px));
-  margin: 0 auto;
-  padding: 28px 0 42px;
-}
-h1, h2 {
-  margin: 0;
-}
-h1 {
-  font-size: 30px;
-}
-h2 {
-  font-size: 19px;
-  margin-top: 28px;
-}
-.muted {
-  color: #667085;
-}
-.metrics {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 12px;
-  margin: 18px 0;
-}
-.metric, .panel {
-  background: white;
-  border: 1px solid #d0d7de;
-  border-radius: 8px;
-}
-.metric {
-  padding: 14px;
-}
-.label {
-  color: #667085;
-  font-size: 12px;
-  text-transform: uppercase;
-}
-.value {
-  font-size: 24px;
-  font-weight: 700;
-  margin-top: 5px;
-}
-.note {
-  display: block;
-  color: #667085;
-  font-size: 12px;
-  margin-top: 4px;
-}
-.panel {
-  margin-top: 12px;
-  padding: 14px;
-  overflow-x: auto;
-}
-.links a {
-  color: #0969da;
-  margin-right: 14px;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-th, td {
-  border-bottom: 1px solid #d8dee4;
-  padding: 8px 10px;
-  text-align: left;
-  white-space: nowrap;
-}
-th {
-  background: #f6f8fa;
-}
-"""
-
-
-def latest_table(latest_df):
-    rows = []
-    for _, row in latest_df.iterrows():
-        rows.append(
-            "<tr>"
-            f"<td>{html.escape(row['Area'])}</td>"
-            f"<td>{'' if pd.isna(row['Occupancy']) else int(row['Occupancy'])}</td>"
-            f"<td>{html.escape(row['Status'])}</td>"
-            "</tr>"
+def build_area_summary(df):
+    numeric = df.dropna(subset=["Occupancy"]).copy()
+    if numeric.empty:
+        return pd.DataFrame(
+            columns=[
+                "Area",
+                "Samples",
+                "AvgOccupancy",
+                "MedianOccupancy",
+                "MaxOccupancy",
+                "ZeroRate",
+                "LatestOccupancy",
+                "LatestStatus",
+            ]
         )
 
-    return f"""
-    <table>
-      <thead><tr><th>Area</th><th>Occupancy</th><th>Status</th></tr></thead>
-      <tbody>{''.join(rows)}</tbody>
-    </table>
-    """
+    latest_ts = df["Timestamp_ET"].max()
+    latest = df[df["Timestamp_ET"] == latest_ts][["Area", "Occupancy", "Status"]].copy()
+    latest = latest.rename(columns={"Occupancy": "LatestOccupancy", "Status": "LatestStatus"})
+
+    grouped = numeric.groupby("Area")["Occupancy"]
+    summary = pd.DataFrame(
+        {
+            "Area": grouped.mean().index,
+            "Samples": grouped.count().values,
+            "AvgOccupancy": grouped.mean().round(2).values,
+            "MedianOccupancy": grouped.median().round(2).values,
+            "MaxOccupancy": grouped.max().round(2).values,
+            "ZeroRate": grouped.apply(lambda s: round(float((s == 0).mean()), 3)).values,
+        }
+    )
+    return summary.merge(latest, on="Area", how="left").sort_values(
+        ["AvgOccupancy", "ZeroRate", "Area"], ascending=[True, False, True]
+    )
 
 
-def render_site(df):
+def write_dashboard(df):
     SITE_DIR.mkdir(exist_ok=True)
 
-    if df.empty:
-        render_empty_site()
-        log("Rendered empty dashboard")
-        return
+    records = export_records(df)
+    summary = build_area_summary(df)
+    latest_ts = "" if df.empty else df["Timestamp_ET"].max().strftime("%Y-%m-%d %H:%M:%S")
+    first_ts = "" if df.empty else df["Timestamp_ET"].min().strftime("%Y-%m-%d")
 
-    latest_ts = df["Timestamp_ET"].max()
-    latest_df = df[df["Timestamp_ET"] == latest_ts].sort_values("Area")
-    numeric_df = df.dropna(subset=["Occupancy"]).copy()
-
-    areas_tracked = df["Area"].nunique()
-    samples = len(df)
-    latest_total = int(latest_df["Occupancy"].fillna(0).sum())
-    latest_zero = int((latest_df["Occupancy"].fillna(0) == 0).sum())
-    first_sample = df["Timestamp_ET"].min().strftime("%Y-%m-%d")
-    last_sample = latest_ts.strftime("%Y-%m-%d %H:%M:%S")
-
-    avg_by_area = (
-        numeric_df.groupby("Area", as_index=False)["Occupancy"]
-        .mean()
-        .rename(columns={"Occupancy": "AvgOccupancy"})
-        .sort_values("AvgOccupancy", ascending=True)
+    (SITE_DIR / "dashboard_data.json").write_text(
+        json.dumps(
+            {
+                "sheetTab": SHEET_TAB_NAME,
+                "generatedAt": pd.Timestamp.now(tz="America/New_York").strftime("%Y-%m-%d %H:%M:%S %Z"),
+                "firstSampleDate": first_ts,
+                "latestRun": latest_ts,
+                "records": records,
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
     )
 
-    low_areas = avg_by_area["Area"].head(8).tolist()
-    df_low = numeric_df[numeric_df["Area"].isin(low_areas)].sort_values("Timestamp_ET")
-
-    heat = numeric_df.groupby(["Area", "Hour"], as_index=False)["Occupancy"].mean()
-    pivot = heat.pivot(index="Area", columns="Hour", values="Occupancy").fillna(0)
-
-    by_day = numeric_df.groupby(["Weekday"], as_index=False)["Occupancy"].mean()
-    day_order = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-    by_day["Weekday"] = pd.Categorical(by_day["Weekday"], categories=day_order, ordered=True)
-    by_day = by_day.sort_values("Weekday")
-
-    avg_by_area.to_csv(SITE_DIR / "avg_by_area.csv", index=False)
-    latest_df.to_csv(SITE_DIR / "latest_snapshot.csv", index=False)
     df.to_csv(SITE_DIR / "occupancy_log_export.csv", index=False)
+    summary.to_csv(SITE_DIR / "area_summary.csv", index=False)
+    if not df.empty:
+        latest_df = df[df["Timestamp_ET"] == df["Timestamp_ET"].max()]
+        latest_df.to_csv(SITE_DIR / "latest_snapshot.csv", index=False)
+    else:
+        pd.DataFrame(columns=df.columns).to_csv(SITE_DIR / "latest_snapshot.csv", index=False)
 
-    fig_avg = px.bar(
-        avg_by_area,
-        x="AvgOccupancy",
-        y="Area",
-        orientation="h",
-        title="Average Occupancy by Area",
-        labels={"AvgOccupancy": "Avg occupancy", "Area": "Area"},
-    )
+    (SITE_DIR / "index.html").write_text(index_html(), encoding="utf-8")
+    log(f"Rendered dashboard app with {len(records)} records and {df['Area'].nunique() if not df.empty else 0} areas")
 
-    fig_time = px.line(
-        df_low,
-        x="Timestamp_ET",
-        y="Occupancy",
-        color="Area",
-        title="Least-Used Areas Over Time",
-        labels={"Timestamp_ET": "Time (ET)", "Occupancy": "Occupancy"},
-    )
 
-    fig_heat = px.imshow(
-        pivot,
-        aspect="auto",
-        title="Average Occupancy by Area and Time",
-        labels=dict(x="Hour (ET)", y="Area", color="Avg occupancy"),
-    )
-
-    fig_day = px.bar(
-        by_day,
-        x="Weekday",
-        y="Occupancy",
-        title="Average Occupancy by Day of Week",
-        labels={"Occupancy": "Avg occupancy", "Weekday": "Day"},
-    )
-
-    metrics = "\n".join(
-        [
-            metric_card("Last run", last_sample, "America/New_York"),
-            metric_card("Latest total", latest_total, "People checked in"),
-            metric_card("Open areas", latest_zero, "Areas with zero occupancy"),
-            metric_card("Areas tracked", areas_tracked),
-            metric_card("Samples", samples, f"Since {first_sample}"),
-        ]
-    )
-
-    html_doc = f"""<!doctype html>
-<html>
+def index_html():
+    return """<!doctype html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>iSportsman Occupancy Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>{base_css()}</style>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --panel: #ffffff;
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #d0d7de;
+      --blue: #0969da;
+      --green: #1a7f37;
+      --amber: #9a6700;
+      --red: #cf222e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Arial, sans-serif;
+    }
+    main {
+      width: min(1280px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 38px;
+    }
+    header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+    h1, h2, h3 { margin: 0; }
+    h1 { font-size: 28px; line-height: 1.1; }
+    h2 { font-size: 18px; }
+    h3 { font-size: 15px; }
+    .muted { color: var(--muted); }
+    .actions a {
+      display: inline-block;
+      color: var(--blue);
+      font-size: 14px;
+      margin-left: 12px;
+      text-decoration: none;
+    }
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(130px, 1fr));
+      gap: 10px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    label {
+      color: var(--muted);
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+    select, input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      font: inherit;
+      min-height: 36px;
+      padding: 6px 8px;
+      background: white;
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .metric, .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .metric {
+      min-height: 86px;
+      padding: 12px;
+    }
+    .metric .label {
+      margin-bottom: 6px;
+    }
+    .metric .value {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+    .metric .note {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 5px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+      gap: 12px;
+    }
+    .panel {
+      min-width: 0;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .panel-head {
+      align-items: baseline;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .chart {
+      height: 360px;
+      width: 100%;
+    }
+    .chart.short { height: 290px; }
+    table {
+      border-collapse: collapse;
+      font-size: 13px;
+      width: 100%;
+    }
+    th, td {
+      border-bottom: 1px solid #e6eaef;
+      padding: 8px 9px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    td.num, th.num { text-align: right; }
+    .table-wrap {
+      max-height: 430px;
+      overflow: auto;
+    }
+    .pill {
+      border-radius: 999px;
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+    }
+    .pill.open { background: #dafbe1; color: var(--green); }
+    .pill.busy { background: #fff8c5; color: var(--amber); }
+    .pill.full { background: #ffebe9; color: var(--red); }
+    @media (max-width: 980px) {
+      header { align-items: flex-start; flex-direction: column; }
+      .filters, .metrics, .grid { grid-template-columns: 1fr; }
+      .chart { height: 320px; }
+    }
+  </style>
 </head>
 <body>
   <main>
-    <h1>iSportsman Occupancy Dashboard</h1>
-    <p class="muted">Built from {html.escape(SHEET_TAB_NAME)}. Scheduled for 12:00 and 16:00 America/New_York.</p>
-    <section class="metrics">{metrics}</section>
-    <section class="panel links">
-      <a href="avg_by_area.csv">Average by area CSV</a>
-      <a href="latest_snapshot.csv">Latest snapshot CSV</a>
-      <a href="occupancy_log_export.csv">Full export CSV</a>
-    </section>
-    <h2>Latest Snapshot</h2>
-    <section class="panel">{latest_table(latest_df)}</section>
-    <section class="panel">{fig_div(fig_avg)}</section>
-    <section class="panel">{fig_div(fig_time)}</section>
-    <section class="panel">{fig_div(fig_heat)}</section>
-    <section class="panel">{fig_div(fig_day)}</section>
-  </main>
-</body>
-</html>"""
+    <header>
+      <div>
+        <h1>iSportsman Occupancy Dashboard</h1>
+        <div class="muted" id="subtitle">Loading occupancy history...</div>
+      </div>
+      <nav class="actions">
+        <a href="area_summary.csv">Area summary CSV</a>
+        <a href="latest_snapshot.csv">Latest snapshot CSV</a>
+        <a href="occupancy_log_export.csv">Full export CSV</a>
+      </nav>
+    </header>
 
-    (SITE_DIR / "index.html").write_text(html_doc, encoding="utf-8")
-    log(f"Rendered dashboard with {samples} rows and {areas_tracked} areas")
+    <section class="filters">
+      <div>
+        <label for="range">Date Range</label>
+        <select id="range">
+          <option value="30">Last 30 days</option>
+          <option value="90" selected>Last 90 days</option>
+          <option value="180">Last 180 days</option>
+          <option value="365">Last year</option>
+          <option value="all">All history</option>
+        </select>
+      </div>
+      <div>
+        <label for="hour">Run Time</label>
+        <select id="hour">
+          <option value="all">All run times</option>
+        </select>
+      </div>
+      <div>
+        <label for="area">Area</label>
+        <select id="area">
+          <option value="all">All areas</option>
+        </select>
+      </div>
+      <div>
+        <label for="sort">Rank By</label>
+        <select id="sort">
+          <option value="available">Most often open</option>
+          <option value="avg">Lowest average occupancy</option>
+          <option value="latest">Lowest latest occupancy</option>
+          <option value="samples">Most samples</option>
+        </select>
+      </div>
+      <div>
+        <label for="search">Search Areas</label>
+        <input id="search" placeholder="e.g. A12">
+      </div>
+    </section>
+
+    <section class="metrics" id="metrics"></section>
+
+    <section class="grid">
+      <div>
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Latest Snapshot</h2>
+            <span class="muted" id="latest-note"></span>
+          </div>
+          <div id="latest-chart" class="chart"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Occupancy Trends</h2>
+            <span class="muted">Lowest-use areas in the current filter</span>
+          </div>
+          <div id="trend-chart" class="chart"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Patterns</h2>
+            <span class="muted">Average occupancy by area and run time</span>
+          </div>
+          <div id="heat-chart" class="chart"></div>
+        </section>
+      </div>
+
+      <aside>
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Best Bets</h2>
+            <span class="muted">Ranked from filtered history</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Area</th>
+                  <th class="num">Avg</th>
+                  <th class="num">Open %</th>
+                  <th class="num">Latest</th>
+                  <th class="num">Samples</th>
+                </tr>
+              </thead>
+              <tbody id="summary-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Day of Week</h2>
+            <span class="muted">Average occupancy</span>
+          </div>
+          <div id="weekday-chart" class="chart short"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Latest Details</h2>
+            <span class="muted">Current scrape rows</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Area</th>
+                  <th class="num">Occ</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="latest-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const state = { records: [], meta: {} };
+    const dayOrder = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const colors = ["#0969da", "#1a7f37", "#9a6700", "#8250df", "#cf222e", "#57606a", "#bf3989", "#0550ae"];
+
+    const qs = (id) => document.getElementById(id);
+    const fmt = new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 });
+
+    function parseTs(record) {
+      return new Date(record.ts);
+    }
+
+    function avg(values) {
+      const nums = values.filter((v) => Number.isFinite(v));
+      if (!nums.length) return null;
+      return nums.reduce((a, b) => a + b, 0) / nums.length;
+    }
+
+    function pct(value) {
+      if (!Number.isFinite(value)) return "";
+      return `${Math.round(value * 100)}%`;
+    }
+
+    function esc(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (ch) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[ch]));
+    }
+
+    function statusPill(occupancy) {
+      if (!Number.isFinite(occupancy)) return "";
+      if (occupancy === 0) return '<span class="pill open">Open</span>';
+      if (occupancy <= 2) return '<span class="pill busy">Low</span>';
+      return '<span class="pill full">Busy</span>';
+    }
+
+    function populateControls() {
+      const hours = [...new Set(state.records.map((r) => r.hour))].sort();
+      const areas = [...new Set(state.records.map((r) => r.area))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+
+      qs("hour").innerHTML = '<option value="all">All run times</option>' + hours.map((h) => `<option value="${esc(h)}">${esc(h)}</option>`).join("");
+      qs("area").innerHTML = '<option value="all">All areas</option>' + areas.map((a) => `<option value="${esc(a)}">${esc(a)}</option>`).join("");
+    }
+
+    function filteredRecords() {
+      const range = qs("range").value;
+      const hour = qs("hour").value;
+      const area = qs("area").value;
+      const search = qs("search").value.trim().toLowerCase();
+      const latest = state.records.reduce((max, r) => Math.max(max, parseTs(r).getTime()), 0);
+
+      return state.records.filter((r) => {
+        if (range !== "all") {
+          const days = Number(range);
+          const ageMs = latest - parseTs(r).getTime();
+          if (ageMs > days * 24 * 60 * 60 * 1000) return false;
+        }
+        if (hour !== "all" && r.hour !== hour) return false;
+        if (area !== "all" && r.area !== area) return false;
+        if (search && !r.area.toLowerCase().includes(search)) return false;
+        return Number.isFinite(r.occupancy);
+      });
+    }
+
+    function latestRecords(records) {
+      if (!records.length) return [];
+      const latestTs = records.reduce((max, r) => r.ts > max ? r.ts : max, records[0].ts);
+      return records.filter((r) => r.ts === latestTs).sort((a, b) => a.area.localeCompare(b.area, undefined, { numeric: true }));
+    }
+
+    function areaStats(records) {
+      const byArea = new Map();
+      for (const r of records) {
+        if (!byArea.has(r.area)) byArea.set(r.area, []);
+        byArea.get(r.area).push(r);
+      }
+
+      const latest = latestRecords(records);
+      const latestByArea = new Map(latest.map((r) => [r.area, r]));
+      const stats = [];
+      for (const [area, rows] of byArea.entries()) {
+        const values = rows.map((r) => r.occupancy).filter(Number.isFinite);
+        const average = avg(values);
+        const openRate = values.length ? values.filter((v) => v === 0).length / values.length : 0;
+        const max = values.length ? Math.max(...values) : null;
+        const latestRow = latestByArea.get(area);
+        stats.push({
+          area,
+          samples: values.length,
+          avg: average,
+          openRate,
+          max,
+          latest: latestRow ? latestRow.occupancy : null,
+          latestStatus: latestRow ? latestRow.status : "",
+        });
+      }
+
+      const sort = qs("sort").value;
+      return stats.sort((a, b) => {
+        if (sort === "avg") return (a.avg ?? 9999) - (b.avg ?? 9999) || b.openRate - a.openRate;
+        if (sort === "latest") return (a.latest ?? 9999) - (b.latest ?? 9999) || (a.avg ?? 9999) - (b.avg ?? 9999);
+        if (sort === "samples") return b.samples - a.samples || (a.avg ?? 9999) - (b.avg ?? 9999);
+        return b.openRate - a.openRate || (a.avg ?? 9999) - (b.avg ?? 9999);
+      });
+    }
+
+    function renderMetrics(records) {
+      const latest = latestRecords(records);
+      const areas = new Set(records.map((r) => r.area)).size;
+      const latestTotal = latest.reduce((sum, r) => sum + (Number.isFinite(r.occupancy) ? r.occupancy : 0), 0);
+      const latestOpen = latest.filter((r) => r.occupancy === 0).length;
+      const average = avg(records.map((r) => r.occupancy));
+      const dates = records.map((r) => parseTs(r).getTime());
+      const spanDays = dates.length ? Math.max(1, Math.round((Math.max(...dates) - Math.min(...dates)) / 86400000) + 1) : 0;
+
+      const cards = [
+        ["Latest Total", fmt.format(latestTotal), "people checked in"],
+        ["Open Areas", latestOpen, "zero occupancy now"],
+        ["Areas", areas, "in current filter"],
+        ["Avg Occupancy", average == null ? "n/a" : fmt.format(average), "per area sample"],
+        ["Samples", records.length, "filtered rows"],
+        ["Date Span", spanDays, "days represented"],
+      ];
+
+      qs("metrics").innerHTML = cards.map(([label, value, note]) => `
+        <div class="metric">
+          <div class="label">${esc(label)}</div>
+          <div class="value">${esc(value)}</div>
+          <div class="note">${esc(note)}</div>
+        </div>
+      `).join("");
+    }
+
+    function plotLatest(records) {
+      const latest = latestRecords(records);
+      qs("latest-note").textContent = latest.length ? latest[0].ts.replace("T", " ") + " ET" : "";
+      Plotly.newPlot("latest-chart", [{
+        type: "bar",
+        x: latest.map((r) => r.area),
+        y: latest.map((r) => r.occupancy),
+        marker: { color: latest.map((r) => r.occupancy === 0 ? "#1a7f37" : r.occupancy <= 2 ? "#9a6700" : "#cf222e") },
+        hovertemplate: "%{x}<br>Occupancy: %{y}<extra></extra>"
+      }], layout("Latest Occupancy", { xaxis: { automargin: true }, yaxis: { title: "Occupancy", rangemode: "tozero" } }), config());
+    }
+
+    function plotTrends(records, stats) {
+      const areas = stats.slice(0, 8).map((s) => s.area);
+      const traces = areas.map((area, index) => {
+        const rows = records.filter((r) => r.area === area).sort((a, b) => a.ts.localeCompare(b.ts));
+        return {
+          type: "scatter",
+          mode: "lines+markers",
+          name: area,
+          x: rows.map((r) => r.ts.replace("T", " ")),
+          y: rows.map((r) => r.occupancy),
+          line: { color: colors[index % colors.length], width: 2 },
+          marker: { size: 5 },
+          hovertemplate: `${area}<br>%{x}<br>Occupancy: %{y}<extra></extra>`
+        };
+      });
+      Plotly.newPlot("trend-chart", traces, layout("Lowest-Use Area Trends", { yaxis: { title: "Occupancy", rangemode: "tozero" } }), config());
+    }
+
+    function plotHeat(records, stats) {
+      const areas = stats.slice(0, 30).map((s) => s.area);
+      const hours = [...new Set(records.map((r) => r.hour))].sort();
+      const z = areas.map((area) => hours.map((hour) => {
+        const rows = records.filter((r) => r.area === area && r.hour === hour);
+        return avg(rows.map((r) => r.occupancy)) ?? 0;
+      }));
+      Plotly.newPlot("heat-chart", [{
+        type: "heatmap",
+        x: hours,
+        y: areas,
+        z,
+        colorscale: [[0, "#dafbe1"], [0.45, "#fff8c5"], [1, "#ffebe9"]],
+        hovertemplate: "%{y}<br>%{x}<br>Avg: %{z:.1f}<extra></extra>"
+      }], layout("Average Occupancy Heatmap", { xaxis: { title: "Run time" }, yaxis: { automargin: true } }), config());
+    }
+
+    function plotWeekday(records) {
+      const values = dayOrder.map((day) => avg(records.filter((r) => r.weekday === day).map((r) => r.occupancy)) ?? 0);
+      Plotly.newPlot("weekday-chart", [{
+        type: "bar",
+        x: dayOrder,
+        y: values,
+        marker: { color: "#0969da" },
+        hovertemplate: "%{x}<br>Avg: %{y:.1f}<extra></extra>"
+      }], layout("Average by Weekday", { yaxis: { title: "Avg occupancy", rangemode: "tozero" } }), config());
+    }
+
+    function renderTables(records, stats) {
+      qs("summary-body").innerHTML = stats.slice(0, 50).map((s) => `
+        <tr>
+          <td>${esc(s.area)}</td>
+          <td class="num">${s.avg == null ? "" : fmt.format(s.avg)}</td>
+          <td class="num">${pct(s.openRate)}</td>
+          <td class="num">${s.latest == null ? "" : fmt.format(s.latest)}</td>
+          <td class="num">${s.samples}</td>
+        </tr>
+      `).join("");
+
+      qs("latest-body").innerHTML = latestRecords(records).map((r) => `
+        <tr>
+          <td>${esc(r.area)}</td>
+          <td class="num">${fmt.format(r.occupancy)}</td>
+          <td>${statusPill(r.occupancy)} ${esc(r.status)}</td>
+        </tr>
+      `).join("");
+    }
+
+    function layout(title, extra = {}) {
+      return {
+        title: { text: title, font: { size: 15 } },
+        margin: { l: 48, r: 18, t: 42, b: 55 },
+        paper_bgcolor: "#ffffff",
+        plot_bgcolor: "#ffffff",
+        font: { family: "Arial, sans-serif", size: 12, color: "#17202a" },
+        ...extra
+      };
+    }
+
+    function config() {
+      return { responsive: true, displayModeBar: false };
+    }
+
+    function render() {
+      const records = filteredRecords();
+      const stats = areaStats(records);
+      renderMetrics(records);
+      renderTables(records, stats);
+      plotLatest(records);
+      plotTrends(records, stats);
+      plotHeat(records, stats);
+      plotWeekday(records);
+    }
+
+    async function init() {
+      const response = await fetch("dashboard_data.json");
+      const data = await response.json();
+      state.meta = data;
+      state.records = data.records.map((r) => ({ ...r, occupancy: r.occupancy == null ? null : Number(r.occupancy) }));
+
+      qs("subtitle").textContent = `${state.records.length.toLocaleString()} samples from ${data.firstSampleDate || "n/a"} through ${data.latestRun || "n/a"} ET. Built ${data.generatedAt}.`;
+      populateControls();
+      ["range", "hour", "area", "sort", "search"].forEach((id) => qs(id).addEventListener("input", render));
+      render();
+    }
+
+    init().catch((error) => {
+      qs("subtitle").textContent = `Could not load dashboard_data.json: ${error}`;
+    });
+  </script>
+</body>
+</html>
+"""
 
 
 def main():
     ws = connect_sheet()
     df = load_df(ws)
-    render_site(df)
+    write_dashboard(df)
 
 
 if __name__ == "__main__":
