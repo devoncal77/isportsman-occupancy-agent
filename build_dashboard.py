@@ -507,6 +507,14 @@ def index_html():
       return '<span class="pill full">Busy</span>';
     }
 
+    function plotOrFallback(elementId, traces, plotLayout) {
+      if (!window.Plotly) {
+        qs(elementId).innerHTML = '<div class="muted">Charts are unavailable because Plotly did not load. Filters still update the metrics and tables.</div>';
+        return;
+      }
+      Plotly.react(elementId, traces, plotLayout, config());
+    }
+
     function populateControls() {
       const hours = [...new Set(state.records.map((r) => r.hour))].sort();
       const areas = [...new Set(state.records.map((r) => r.area))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
@@ -602,6 +610,12 @@ def index_html():
       return count === "all" ? stats : stats.slice(0, Number(count));
     }
 
+    function onControl(id, handler) {
+      const element = qs(id);
+      element.addEventListener("change", handler);
+      element.addEventListener("input", handler);
+    }
+
     function renderMetrics(records) {
       const latest = latestRecords(records);
       const areas = new Set(records.map((r) => r.area)).size;
@@ -633,7 +647,7 @@ def index_html():
     function plotUsage(stats) {
       const top = selectedStats(stats);
       qs("usage-note").textContent = `${top.length} areas shown`;
-      Plotly.newPlot("usage-chart", [{
+      plotOrFallback("usage-chart", [{
         type: "bar",
         x: top.map((s) => s.activeSamples),
         y: top.map((s) => s.area),
@@ -641,7 +655,7 @@ def index_html():
         customdata: top.map((s) => [s.total, s.avg, s.usageRate, s.max, s.samples]),
         marker: { color: "#0969da" },
         hovertemplate: "Area %{y}<br>Times occupied: %{x}<br>Total occupancy: %{customdata[0]:.1f}<br>Avg: %{customdata[1]:.1f}<br>Used: %{customdata[2]:.0%}<br>Peak: %{customdata[3]:.1f}<br>Samples: %{customdata[4]}<extra></extra>"
-      }], layout("Top Areas by Times Occupied", { xaxis: { title: "Scrapes with occupancy greater than zero" }, yaxis: { automargin: true, autorange: "reversed" } }), config());
+      }], layout("Top Areas by Times Occupied", { xaxis: { title: "Scrapes with occupancy greater than zero" }, yaxis: { automargin: true, autorange: "reversed" } }));
     }
 
     function plotTrends(records, stats) {
@@ -659,7 +673,7 @@ def index_html():
           hovertemplate: `${area}<br>%{x}<br>Occupancy: %{y}<extra></extra>`
         };
       });
-      Plotly.newPlot("trend-chart", traces, layout("Top Usage Area Trends", { yaxis: { title: "Occupancy", rangemode: "tozero" } }), config());
+      plotOrFallback("trend-chart", traces, layout("Top Usage Area Trends", { yaxis: { title: "Occupancy", rangemode: "tozero" } }));
     }
 
     function plotHeat(records, stats) {
@@ -669,25 +683,25 @@ def index_html():
         const rows = records.filter((r) => r.area === area && r.hour === hour);
         return avg(rows.map((r) => r.occupancy)) ?? 0;
       }));
-      Plotly.newPlot("heat-chart", [{
+      plotOrFallback("heat-chart", [{
         type: "heatmap",
         x: hours,
         y: areas,
         z,
         colorscale: [[0, "#dafbe1"], [0.45, "#fff8c5"], [1, "#ffebe9"]],
         hovertemplate: "%{y}<br>%{x}<br>Avg: %{z:.1f}<extra></extra>"
-      }], layout("Average Occupancy Heatmap", { xaxis: { title: "Run time" }, yaxis: { automargin: true } }), config());
+      }], layout("Average Occupancy Heatmap", { xaxis: { title: "Run time" }, yaxis: { automargin: true } }));
     }
 
     function plotWeekday(records) {
       const values = dayOrder.map((day) => avg(records.filter((r) => r.weekday === day).map((r) => r.occupancy)) ?? 0);
-      Plotly.newPlot("weekday-chart", [{
+      plotOrFallback("weekday-chart", [{
         type: "bar",
         x: dayOrder,
         y: values,
         marker: { color: "#0969da" },
         hovertemplate: "%{x}<br>Avg: %{y:.1f}<extra></extra>"
-      }], layout("Average by Weekday", { yaxis: { title: "Avg occupancy", rangemode: "tozero" } }), config());
+      }], layout("Average by Weekday", { yaxis: { title: "Avg occupancy", rangemode: "tozero" } }));
     }
 
     function renderTables(records, stats) {
@@ -731,6 +745,7 @@ def index_html():
     function render() {
       const records = filteredRecords();
       const stats = areaStats(records);
+      qs("subtitle").textContent = `${records.length.toLocaleString()} filtered samples from ${state.meta.firstSampleDate || "n/a"} through ${state.meta.latestRun || "n/a"} ET. Built ${state.meta.generatedAt}.`;
       renderMetrics(records);
       renderTables(records, stats);
       plotUsage(stats);
@@ -745,15 +760,13 @@ def index_html():
       state.meta = data;
       state.records = data.records.map((r) => ({ ...r, occupancy: r.occupancy == null ? null : Number(r.occupancy) }));
 
-      qs("subtitle").textContent = `${state.records.length.toLocaleString()} samples from ${data.firstSampleDate || "n/a"} through ${data.latestRun || "n/a"} ET. Built ${data.generatedAt}.`;
       populateControls();
-      qs("range").addEventListener("input", () => {
+      onControl("range", () => {
         qs("start-date").value = "";
         qs("end-date").value = "";
         render();
       });
-      ["start-date", "end-date"].forEach((id) => qs(id).addEventListener("input", render));
-      ["hour", "area", "sort", "top-count", "search"].forEach((id) => qs(id).addEventListener("input", render));
+      ["start-date", "end-date", "hour", "area", "sort", "top-count", "search"].forEach((id) => onControl(id, render));
       render();
     }
 
