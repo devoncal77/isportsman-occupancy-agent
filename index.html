@@ -212,7 +212,8 @@
       <div>
         <label for="sort">Rank By</label>
         <select id="sort">
-          <option value="total" selected>Total usage</option>
+          <option value="occupied" selected>Times occupied</option>
+          <option value="total">Total occupancy</option>
           <option value="avg">Average occupancy</option>
           <option value="rate">Usage rate</option>
           <option value="peak">Peak occupancy</option>
@@ -275,6 +276,7 @@
               <thead>
                 <tr>
                   <th>Area</th>
+                  <th class="num">Times</th>
                   <th class="num">Total</th>
                   <th class="num">Avg</th>
                   <th class="num">Used %</th>
@@ -352,6 +354,14 @@
       if (occupancy === 0) return '<span class="pill open">Open</span>';
       if (occupancy <= 2) return '<span class="pill busy">Low</span>';
       return '<span class="pill full">Busy</span>';
+    }
+
+    function plotOrFallback(elementId, traces, plotLayout) {
+      if (!window.Plotly) {
+        qs(elementId).innerHTML = '<div class="muted">Charts are unavailable because Plotly did not load. Filters still update the metrics and tables.</div>';
+        return;
+      }
+      Plotly.react(elementId, traces, plotLayout, config());
     }
 
     function populateControls() {
@@ -435,11 +445,12 @@
 
       const sort = qs("sort").value;
       return stats.sort((a, b) => {
-        if (sort === "avg") return (b.avg ?? -1) - (a.avg ?? -1) || b.total - a.total;
-        if (sort === "rate") return b.usageRate - a.usageRate || b.total - a.total;
-        if (sort === "peak") return (b.max ?? -1) - (a.max ?? -1) || b.total - a.total;
-        if (sort === "samples") return b.samples - a.samples || b.total - a.total;
-        return b.total - a.total || (b.avg ?? -1) - (a.avg ?? -1);
+        if (sort === "total") return b.total - a.total || b.activeSamples - a.activeSamples;
+        if (sort === "avg") return (b.avg ?? -1) - (a.avg ?? -1) || b.activeSamples - a.activeSamples;
+        if (sort === "rate") return b.usageRate - a.usageRate || b.activeSamples - a.activeSamples;
+        if (sort === "peak") return (b.max ?? -1) - (a.max ?? -1) || b.activeSamples - a.activeSamples;
+        if (sort === "samples") return b.samples - a.samples || b.activeSamples - a.activeSamples;
+        return b.activeSamples - a.activeSamples || b.total - a.total;
       });
     }
 
@@ -448,20 +459,26 @@
       return count === "all" ? stats : stats.slice(0, Number(count));
     }
 
+    function onControl(id, handler) {
+      const element = qs(id);
+      element.addEventListener("change", handler);
+      element.addEventListener("input", handler);
+    }
+
     function renderMetrics(records) {
       const latest = latestRecords(records);
       const areas = new Set(records.map((r) => r.area)).size;
       const latestTotal = latest.reduce((sum, r) => sum + (Number.isFinite(r.occupancy) ? r.occupancy : 0), 0);
       const totalUsage = records.reduce((sum, r) => sum + (Number.isFinite(r.occupancy) ? r.occupancy : 0), 0);
-      const usedSamples = records.filter((r) => r.occupancy > 0).length;
+      const occupiedScrapes = records.filter((r) => r.occupancy > 0).length;
       const average = avg(records.map((r) => r.occupancy));
       const dates = records.map((r) => parseTs(r).getTime());
       const spanDays = dates.length ? Math.max(1, Math.round((Math.max(...dates) - Math.min(...dates)) / 86400000) + 1) : 0;
 
       const cards = [
-        ["Total Usage", fmt.format(totalUsage), "sum of occupancy"],
+        ["Times Occupied", fmt.format(occupiedScrapes), "scrapes above zero"],
+        ["Total Occupancy", fmt.format(totalUsage), "sum of occupancy"],
         ["Latest Total", fmt.format(latestTotal), "people checked in"],
-        ["Used Samples", usedSamples, "rows above zero"],
         ["Areas", areas, "in current filter"],
         ["Avg Occupancy", average == null ? "n/a" : fmt.format(average), "per area sample"],
         ["Date Span", spanDays, "days represented"],
@@ -479,15 +496,15 @@
     function plotUsage(stats) {
       const top = selectedStats(stats);
       qs("usage-note").textContent = `${top.length} areas shown`;
-      Plotly.newPlot("usage-chart", [{
+      plotOrFallback("usage-chart", [{
         type: "bar",
-        x: top.map((s) => s.total),
+        x: top.map((s) => s.activeSamples),
         y: top.map((s) => s.area),
         orientation: "h",
-        customdata: top.map((s) => [s.avg, s.usageRate, s.max, s.samples]),
+        customdata: top.map((s) => [s.total, s.avg, s.usageRate, s.max, s.samples]),
         marker: { color: "#0969da" },
-        hovertemplate: "Area %{y}<br>Total usage: %{x:.1f}<br>Avg: %{customdata[0]:.1f}<br>Used: %{customdata[1]:.0%}<br>Peak: %{customdata[2]:.1f}<br>Samples: %{customdata[3]}<extra></extra>"
-      }], layout("Top Areas by Total Usage", { xaxis: { title: "Total occupancy" }, yaxis: { automargin: true, autorange: "reversed" } }), config());
+        hovertemplate: "Area %{y}<br>Times occupied: %{x}<br>Total occupancy: %{customdata[0]:.1f}<br>Avg: %{customdata[1]:.1f}<br>Used: %{customdata[2]:.0%}<br>Peak: %{customdata[3]:.1f}<br>Samples: %{customdata[4]}<extra></extra>"
+      }], layout("Top Areas by Times Occupied", { xaxis: { title: "Scrapes with occupancy greater than zero" }, yaxis: { automargin: true, autorange: "reversed" } }));
     }
 
     function plotTrends(records, stats) {
@@ -505,7 +522,7 @@
           hovertemplate: `${area}<br>%{x}<br>Occupancy: %{y}<extra></extra>`
         };
       });
-      Plotly.newPlot("trend-chart", traces, layout("Top Usage Area Trends", { yaxis: { title: "Occupancy", rangemode: "tozero" } }), config());
+      plotOrFallback("trend-chart", traces, layout("Top Usage Area Trends", { yaxis: { title: "Occupancy", rangemode: "tozero" } }));
     }
 
     function plotHeat(records, stats) {
@@ -515,31 +532,32 @@
         const rows = records.filter((r) => r.area === area && r.hour === hour);
         return avg(rows.map((r) => r.occupancy)) ?? 0;
       }));
-      Plotly.newPlot("heat-chart", [{
+      plotOrFallback("heat-chart", [{
         type: "heatmap",
         x: hours,
         y: areas,
         z,
         colorscale: [[0, "#dafbe1"], [0.45, "#fff8c5"], [1, "#ffebe9"]],
         hovertemplate: "%{y}<br>%{x}<br>Avg: %{z:.1f}<extra></extra>"
-      }], layout("Average Occupancy Heatmap", { xaxis: { title: "Run time" }, yaxis: { automargin: true } }), config());
+      }], layout("Average Occupancy Heatmap", { xaxis: { title: "Run time" }, yaxis: { automargin: true } }));
     }
 
     function plotWeekday(records) {
       const values = dayOrder.map((day) => avg(records.filter((r) => r.weekday === day).map((r) => r.occupancy)) ?? 0);
-      Plotly.newPlot("weekday-chart", [{
+      plotOrFallback("weekday-chart", [{
         type: "bar",
         x: dayOrder,
         y: values,
         marker: { color: "#0969da" },
         hovertemplate: "%{x}<br>Avg: %{y:.1f}<extra></extra>"
-      }], layout("Average by Weekday", { yaxis: { title: "Avg occupancy", rangemode: "tozero" } }), config());
+      }], layout("Average by Weekday", { yaxis: { title: "Avg occupancy", rangemode: "tozero" } }));
     }
 
     function renderTables(records, stats) {
       qs("summary-body").innerHTML = selectedStats(stats).slice(0, 75).map((s) => `
         <tr>
           <td>${esc(s.area)}</td>
+          <td class="num">${s.activeSamples}</td>
           <td class="num">${fmt.format(s.total)}</td>
           <td class="num">${s.avg == null ? "" : fmt.format(s.avg)}</td>
           <td class="num">${pct(s.usageRate)}</td>
@@ -576,6 +594,7 @@
     function render() {
       const records = filteredRecords();
       const stats = areaStats(records);
+      qs("subtitle").textContent = `${records.length.toLocaleString()} filtered samples from ${state.meta.firstSampleDate || "n/a"} through ${state.meta.latestRun || "n/a"} ET. Built ${state.meta.generatedAt}.`;
       renderMetrics(records);
       renderTables(records, stats);
       plotUsage(stats);
@@ -590,15 +609,13 @@
       state.meta = data;
       state.records = data.records.map((r) => ({ ...r, occupancy: r.occupancy == null ? null : Number(r.occupancy) }));
 
-      qs("subtitle").textContent = `${state.records.length.toLocaleString()} samples from ${data.firstSampleDate || "n/a"} through ${data.latestRun || "n/a"} ET. Built ${data.generatedAt}.`;
       populateControls();
-      qs("range").addEventListener("input", () => {
+      onControl("range", () => {
         qs("start-date").value = "";
         qs("end-date").value = "";
         render();
       });
-      ["start-date", "end-date"].forEach((id) => qs(id).addEventListener("input", render));
-      ["hour", "area", "sort", "top-count", "search"].forEach((id) => qs(id).addEventListener("input", render));
+      ["start-date", "end-date", "hour", "area", "sort", "top-count", "search"].forEach((id) => onControl(id, render));
       render();
     }
 
