@@ -1,8 +1,8 @@
 {
   "sheetTab": "OccupancyLog",
-  "generatedAt": "2026-08-16 12:30:49 EDT",
+  "generatedAt": "2026-08-16 16:27:55 EDT",
   "firstSampleDate": "2025-09-02",
-  "latestRun": "2026-08-16 12:30:36",
+  "latestRun": "2026-08-16 16:27:44",
   "records": [
     {
       "ts": "2025-09-02T14:57:27",
@@ -367978,6 +367978,666 @@
       "ts": "2026-08-16T12:30:36",
       "date": "2026-08-16",
       "hour": "12:30",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Z6",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "A1",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "A2",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "A3 Bow (No Crossbow)",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "B",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Beaver Pond",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Brooks Hollow",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Buckner Bow (No Crossbow)",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Bull Pond",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "C",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "CS",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "CS 2 Bow (No Crossbow)",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Constitution Island",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Cragston Lakes",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Cranberry Pond",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "D1",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "D2",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "D3",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "E1",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "E2",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "F",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "FA - Popolopen Brook - Downstream from Weyants Bridge",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "FA - Popolopen Brook - Upstream from Weyants Bridge",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Firewood Collection - Garrard Rd",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "G1",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "G2 Bow (No Crossbow)",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "H",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "I",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "J1 Bow (No Crossbow)",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "J2 Bow (No Crossbow)",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "J3 Bow (No Crossbow)",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "J4 Bow (No Crossbow)",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "J5 Bow (No Crossbow)",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "K Bow (No Crossbow)",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "L",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Lake Frederick",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Lake Georgina",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Long Pond",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Lusk Pond",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "M",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Mine Lake",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Mine Torne Road",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "N",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "O",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "P",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Popolopen Lake",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Q",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "R",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "R - Disabled Hunting",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "RP Bow (No Crossbow)",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Round Pond",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "S",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Stilwell Lake",
+      "occupancy": 1.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "T1",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "T2",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "U1",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "U2",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "V/W Bow (No Crossbow)",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Weyants Pond",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Wilkins Pond",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "X",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Y",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Z1",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Z2",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Z4",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
+      "weekday": "Sun",
+      "weekend": true,
+      "area": "Z5",
+      "occupancy": 0.0,
+      "status": "Open"
+    },
+    {
+      "ts": "2026-08-16T16:27:44",
+      "date": "2026-08-16",
+      "hour": "16:27",
       "weekday": "Sun",
       "weekend": true,
       "area": "Z6",
